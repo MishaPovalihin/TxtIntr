@@ -15,7 +15,7 @@ void Instruction(int argc, char* argv[]) {
 }
 
 int main(int argc, char* argv[]) {
-    if (argc < 2) {
+    if (argc < 4) {
         cout << "Калькулятор тангенсов и котангенсов" << endl;
         Instruction(argc, argv);
         return 1;
@@ -23,33 +23,43 @@ int main(int argc, char* argv[]) {
 
     string operation = argv[1];
 	string operationType = argv[2]; 
-	double operand = stod(argv[3]);
-    if (operation == "-t" && argc > 2) { 
-        if (operationType == "grad") {
-            cout << "Результат: " << tan((operand*M_PI)/180) << endl;
-        } else if (operationType == "rad") {
-            cout << "Результат: " << tan(operand) << endl;
-        } else {
-            cout << "Неподдерживаемая операция! " << operationType << endl;
-            Instruction(argc, argv);
-            return 1;
-        }
-    }
-	else if (operation == "-c" && argc > 2) { 
+	if (string(argv[3]).empty()) {
+		cout << "Операнд не может быть пустым." << endl;
+		return 1;
+	}
+	try {
+		double operand = stod(argv[3]);
+		if (operation == "-t") { 
 			if (operationType == "grad") {
-				cout << "Результат: " << 1/(tan((operand*M_PI)/180)) << endl;
+				cout << "Результат: " << tan((operand*M_PI)/180) << endl;
 			} else if (operationType == "rad") {
-				cout << "Результат: " << 1/(tan(operand)) << endl;
+				cout << "Результат: " << tan(operand) << endl;
 			} else {
 				cout << "Неподдерживаемая операция! " << operationType << endl;
 				Instruction(argc, argv);
 				return 1;
 			}
-	}else {
-        cout << "Неправильный формат команды." << endl;
-        Instruction(argc, argv);
-        return 1;
-    } 
+		}
+		else if (operation == "-c") { 
+				if (operationType == "grad") {
+					cout << "Результат: " << 1/(tan((operand*M_PI)/180)) << endl;
+				} else if (operationType == "rad") {
+					cout << "Результат: " << 1/(tan(operand)) << endl;
+				} else {
+					cout << "Неподдерживаемая операция! " << operationType << endl;
+					Instruction(argc, argv);
+					return 1;
+				}
+		}else {
+			cout << "Неправильный формат команды." << endl;
+			Instruction(argc, argv);
+			return 1;
+		} 
+	}
+	catch (const std::invalid_argument& ia) {
+		cout << "Неверный формат операнда. Операнд должен быть числом." << endl;
+		return 1;
+	}
     
     return 0;
 }
